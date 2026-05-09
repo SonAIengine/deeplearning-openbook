@@ -825,9 +825,15 @@ PyTorch에서 `model.eval()` 안 부르고 evaluation하면:
 
 > **잠깐 — GBM이 뭔가?** 자료 전반에 baseline·비교 대상으로 자주 등장하므로 한 번 정리한다.
 >
-> **GBM (Gradient Boosting Machine)** 은 약한 결정 트리(보통 depth 4~8) 여러 개를 *순차적으로* 합쳐 만드는 ensemble이다. 핵심은 **함수 공간에서의 gradient descent** — 신경망이 *파라미터 공간*에서 loss의 gradient를 따라 update하듯, GBM은 *함수 공간*에서 같은 일을 한다.
+> **GBM (Gradient Boosting Machine)** 은 약한 결정 트리(보통 depth 4–8) 여러 개를 *순차적으로* 합쳐 만드는 ensemble이다. 핵심은 **함수 공간에서의 gradient descent** — 신경망이 *파라미터 공간*에서 loss의 gradient를 따라 update하듯, GBM은 *함수 공간*에서 같은 일을 한다.
 >
-> 절차: 현재까지의 모델 $F_{m-1}$이 만든 loss의 gradient를 각 sample에서 계산 (squared error 회귀라면 단순히 잔차 $y_i - F_{m-1}(x_i)$). 새 트리 $h_m$이 그 음의 gradient를 *예측*하도록 학습. 모델 갱신은 $F_m = F_{m-1} + \eta \cdot h_m$. 이걸 100~10,000번 반복.
+> 절차는 다음과 같다. 현재까지의 모델을 $F_{m-1}$이라 하면, 새 트리는 그 모델의 음의 gradient를 예측하도록 학습된다.
+>
+> 새 트리를 $h_m$이라 적고 step size $\eta$로 누적해 갱신:
+>
+> $$F_m(x) = F_{m-1}(x) + \eta \cdot h_m(x)$$
+>
+> Squared error 회귀라면 음의 gradient가 곧 잔차 $y - F_{m-1}(x)$라, 새 트리는 *이전 모델이 못 맞춘 잔차*를 fit하는 셈이 된다. 이 step을 100–10,000번 반복.
 >
 > **표 데이터의 압도적 강자**다 — (1) 분할 기반이라 비선형·feature 상호작용 자연, (2) scale 무관(표준화 불필요), (3) 결측·이상치 robust, (4) hyperparameter 튜닝 부담 작음, (5) 적은 데이터에서도 잘 동작. 신경망은 매우 큰 데이터 + 강한 카테고리/embedding이 필요한 곳에서만 경쟁한다. 실무 표준 구현은 **XGBoost**(2014), **LightGBM**(2017), **CatBoost** — Kaggle 표 데이터 대회의 사실상 default. 이후 자료에서 GBM이 등장하면 이 박스를 떠올리면 된다 (§07, §11, §13에서 표 데이터·시계열·이상탐지 비교에 자주 나옴).
 
