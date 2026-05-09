@@ -24,7 +24,13 @@ $$f^*: \mathcal{X} \to \mathcal{Y}$$
 
 $$D = \{(x_i, y_i) \mid i = 1, \ldots, N\}$$
 
-우리가 만들 모델은 파라미터 $\theta$를 가지는 함수 $f_\theta(x)$이며, 학습 데이터의 모든 $i$에 대해 $f_\theta(x_i) \approx y_i$가 되도록 $\theta$를 조정한다. 학습이란 결국 **이 조정 과정** 이고, 좋은 학습이란 본 적 없는 새 입력 $x_{\text{new}}$에 대해서도 $f_\theta(x_{\text{new}}) \approx f^*(x_{\text{new}})$가 되는 것 — 즉 **일반화(generalization)** 가 잘 되는 학습이다.
+우리가 만들 모델은 파라미터 $\theta$로 매개화된 함수족이며, 학습 데이터의 모든 점에 대해 모델 출력이 정답에 가깝도록 $\theta$를 조정한다.
+
+$$f_\theta(x_i) \approx y_i$$
+
+학습이란 결국 **이 조정 과정** 이고, 좋은 학습이란 본 적 없는 새 입력에 대해서도 다음이 성립하는 것 — 즉 **일반화(generalization)** 가 잘 되는 학습이다.
+
+$$f_\theta(x_{\text{new}}) \approx f^*(x_{\text{new}})$$
 
 ### 0.2 ML이 못하는 것
 
@@ -167,11 +173,17 @@ $$L_\delta(y, \hat{y}) = \begin{cases} \frac{1}{2}(y - \hat{y})^2 & |y - \hat{y}
 
 분류에서 cross-entropy의 자리는 압도적이다. MSE를 시도해 본 사람들은 대부분 학습이 안 되어 CE로 돌아왔다. 왜?
 
-**확률적 해석**: 분류 모델의 출력 $\hat{y}_c$는 클래스 $c$일 확률로 해석된다. 정답이 $c^*$라면 likelihood는 $\hat{y}_{c^*}$. 이걸 최대화하는 것이 negative log-likelihood를 최소화하는 것이고, 이게 정확히 cross-entropy다:
+**확률적 해석**: 분류 모델의 출력에서 클래스 $c$에 부여된 확률을 $\hat{y}_c$로 적자. 정답 클래스를 $c^*$라 하면 likelihood는 정답 클래스에 부여된 예측 확률
+
+$$\hat{y}_{c^*}$$
+
+이고, 이를 최대화하는 것이 negative log-likelihood를 최소화하는 것이며, 이게 정확히 cross-entropy다:
 
 $$L_{CE} = -\sum_c y_c \log \hat{y}_c$$
 
-여기서 $y_c$는 정답 분포 (보통 one-hot이지만 label smoothing하면 부드러움), $\hat{y}_c$는 모델 출력 확률.
+여기서 $y_c$는 클래스 $c$의 정답 분포(보통 one-hot이지만 label smoothing하면 부드러움)다.
+
+그리고 $\hat{y}_c$는 모델이 출력한 클래스 $c$의 예측 확률이다.
 
 **Softmax + CE의 마법 — gradient가 깨끗하다.** 마지막 layer의 logit을 $z$, softmax 출력을 $\hat{y}$라 하자. Logit에 대한 CE의 gradient를 직접 계산하면 (체인 룰):
 

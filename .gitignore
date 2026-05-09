@@ -12,3 +12,6 @@ desktop.ini
 # Temp
 *.tmp
 *.bak
+
+# Claude Code (local-only)
+.claude/settings.local.json
