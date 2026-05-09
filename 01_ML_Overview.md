@@ -690,17 +690,20 @@ $$\theta \leftarrow \theta - \eta(\nabla L + 2\lambda\theta) = (1 - 2\eta\lambda
 
 **L1 regularization (Lasso)**: $\lambda \|\theta\|_1$. 일부 가중치를 정확히 0으로 — sparse 솔루션. Feature selection 효과. L2와 달리 0에서 미분 불가능 (subgradient 사용).
 
-**Dropout**: 학습 중 일부 뉴런을 확률 $p$로 무작위 마스킹. 매 step 다른 sub-network. 평가 시 모든 뉴런 사용 (대신 활성값을 $1-p$로 스케일).
+**Dropout**: **overfitting을 막기 위해** 학습 중 일부 뉴런을 확률 $p$로 무작위 마스킹하는 기법. 매 step 다른 sub-network가 만들어지고, 평가 시에는 모든 뉴런을 켜되 활성값을 $1-p$로 스케일해 평균 동작을 흉내 낸다.
+
+근본 아이디어는 *모델이 특정 뉴런·특정 경로에 과도하게 의존하지 못하게 하는 것*이다. 신경망이 큰 용량을 가지면 train set의 noise까지 외워버리는데(§4 bias-variance), dropout은 매 step *어떤 뉴런이 사라질지 모르게* 만들어 모델이 *redundant하게 분산된 표현*을 학습하도록 강제한다. 결과적으로 단일 거대 모델이 아니라 *지수적으로 많은 작은 모델들의 ensemble*을 학습하는 셈이 되고, 이 ensemble 효과가 일반화를 돕는다.
 
 <img src="assets/images/neural_network_dropout.svg" alt="Standard fully connected network on the left, same network with several neurons randomly masked on the right" width="600">
 
 > *왼쪽: 일반 fully-connected 신경망. 오른쪽: 같은 망에서 매 step마다 무작위로 뉴런을 끈 sub-network. 끄인 뉴런(과 연결된 모든 edge)은 그 step에서 forward·backward에 참여하지 않는다. 매 step 다른 마스크 → 사실상 *지수적으로 많은* sub-network들의 ensemble을 학습하는 셈. 평가 시에는 모든 뉴런을 켜되 활성값을 $1-p$로 scaling해 평균 동작을 흉내 낸다.*  
 > *Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Neural_Network_Dropout.svg), Mads Dyrmann, CC BY-SA 4.0.*
 
-해석:
-- *Ensemble 효과*: 여러 sub-network의 사실상 평균
-- *Co-adaptation 방지*: 한 뉴런이 다른 특정 뉴런에 의존 못함
-- *Variance 감소*: 위와 같은 ensemble 정신
+**왜 일반화를 돕는가** — 세 가지 시각으로 같은 메커니즘 보기:
+
+- *Ensemble 효과*: 매 step 다른 mask = 다른 sub-network. 학습 종료 시점에서 모델이 본 sub-network 수는 사실상 지수적. 평가 시 활성값 scaling은 그 모든 sub-network의 *평균 출력*을 근사. ensemble은 본질적으로 일반화에 강함.
+- *Co-adaptation 방지*: 어떤 뉴런이 *특정* 다른 뉴런과 짝지어 동작하면 overfit이 쉽다. dropout은 그 짝이 매 step 사라질 수 있으니 *어떤 뉴런 조합에도 의존하지 않는* 표현을 강제 → 더 generic한 feature가 학습됨.
+- *Variance 감소*: bias-variance 분해(§4)에서 overfit = variance 큼. ensemble의 핵심 효과가 *모델 분산 감소*라, dropout은 variance를 직접 깎는다.
 
 **표준 $p$ (drop 확률)**
 
