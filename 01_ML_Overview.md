@@ -1009,7 +1009,18 @@ PyTorch에서 `model.eval()` 안 부르고 evaluation하면:
 
 **Hyperparameter 튜닝**: Random search > grid search (대부분 case). Bayesian optimization은 비싼 모델에 유리. 단 hyperparameter 수가 많으면 overfit val 위험.
 
-**최종 평가**: Test 한 번 보고 결정. 만약 test 성능이 기대 이하면 문제 정의로 돌아가야 — 모델만 또 튜닝하면 test에 overfit.
+**최종 평가**: Test 한 번 보고 결정. 여기서 "한 번"은 *파일을 한 번만 열 수 있다*는 뜻이 아니라 *그 결과로 모델·hyperparameter를 바꾸지 않는다*는 뜻이다. 같은 모델로 여러 metric을 계산하거나 confusion matrix를 그리는 건 모두 한 번의 평가에 포함된다. 핵심은 *결정의 한 번*.
+
+만약 test 성능이 기대 이하면 옳은 반응은 **문제 정의·데이터·feature 단계로 돌아가는 것**이지 hyperparameter 추가 튜닝이 아니다. test에 보고 모델을 바꾸면 그다음 평가는 신뢰할 수 없는 숫자 — *adaptive overfitting* 또는 selection bias의 결과로 test set의 quirk에 운 좋게 맞춘 결과일 뿐 (§6.1 참고).
+
+**현실의 타협** — 100% "한 번"은 학술·실무 어디서도 완벽하긴 어렵다. 그래서 다음과 같은 우회가 표준이다.
+
+- *학술 연구*: 한 paper에서 한 번. 모델 변경 시 새 test 또는 별도 dataset에서 평가. ImageNet·GLUE·SuperGLUE 등이 여러 sub-test를 두는 게 이런 이유 — 한 set에 over-tune되어도 다른 set이 진짜 추정량 역할.
+- *Kaggle 대회*: 참가자가 매일 score를 보면 사실상 leaderboard에 over-tune됨. 그래서 **private leaderboard**(대회 끝까지 점수 비공개)로 진짜 평가를 분리. 공개 leaderboard 1위가 private에서 폭락하는 건 흔한 일.
+- *산업 배포*: production에 올린 뒤 흘러들어오는 *실제 데이터*가 새 test 역할. **monitoring + drift 감지 + 정기 재학습**이 holdout test의 역할을 대신한다.
+- *불가피하게 다시 평가해야 할 때*: train/val에서 새 holdout을 떼거나 추가 데이터를 수집. 비용·시간이 크지만 통계적 신뢰성이 핵심이면 이 길뿐.
+
+요약하면 — test set은 *production 추정량의 일회성 도구*다. 가능한 한 적게 보고, 본 뒤엔 그 결과를 신뢰성 있는 숫자로 보고, 모델 결정에 다시 사용하지 않는다. 이 규율이 깨지면 *production에서 수치가 곤두박질하는 가장 흔한 원인*이 된다.
 
 **배포**: Latency, 메모리, 비용 제약. ResNet50도 모바일에선 무거움 → MobileNet, distillation, quantization. 정확도 vs 효율 trade-off.
 
