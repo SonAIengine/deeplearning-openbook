@@ -292,7 +292,30 @@ $\eta$가 너무 작으면: 진전이 거의 없거나 너무 느리다. 또 sad
 
 ### 3.3 변종들 — batch, mini-batch, SGD
 
-전체 데이터로 한 번에 gradient를 구해 update하는 게 batch GD. 메모리·연산이 비싸고 update가 드물다. 또 **noise가 없어서 sharp minima로 빠지기 쉽다**.
+전체 데이터를 한 번에 다 보고 gradient를 구해 update하는 게 **batch GD**(또는 *full-batch GD*). 한 step의 update는 모든 sample의 gradient를 평균 낸 것이다.
+
+$$\theta_{t+1} = \theta_t - \eta \cdot \frac{1}{N} \sum_{i=1}^N \nabla L_i(\theta_t)$$
+
+여기서 $L_i$는 $i$번째 sample의 loss, $N$은 전체 sample 수. 평균이 들어가 있어 *진짜 gradient*를 정확히 계산하는 셈이다.
+
+**장점**
+
+- *정확한 방향*: gradient에 stochastic noise가 없으니 매 step이 정확히 가장 가파른 내리막. 같은 데이터·초깃값이면 결과가 결정론적이라 디버깅·재현이 깔끔하다.
+- *수렴 안정성*: 같은 LR에서 SGD가 minimum 주변을 zigzag로 떠돌 때 batch GD는 정확히 정착한다. LR decay가 필수가 아니다.
+- *이론적 분석이 깔끔*: convex case의 수렴 보장, step size 분석이 닫힌 형태로 떨어진다. 학부 최적화 교과서가 보통 이 모델을 가정.
+
+**단점 — 그리고 이게 신경망 시대에 batch GD가 안 쓰이는 이유**
+
+- *연산 비용*: 한 step에 N개 sample 전부 forward + backward를 돌려야 한다. ImageNet의 1.4M장을 한 step에 다 통과시키는 건 비현실적.
+- *메모리*: 데이터셋 + 모든 forward activation을 메모리에 올려야 한다. GPU 한 장으론 못 담는 데이터셋이 부지기수다.
+- *update가 드묾*: 한 epoch에 단 한 번 update. 100 epoch을 돌려도 step이 100번뿐이라 학습 진척이 매우 더디다. 같은 시간에 SGD는 수만 번 update.
+- *online learning 불가*: 데이터가 스트림으로 들어오는 환경에선 작동 못함. 추천·광고처럼 분포가 계속 바뀌는 곳에선 치명적.
+- *sharp minima로 빠지기 쉬움*: gradient에 noise가 없으니 좁고 가파른 minimum 안으로 정확히 미끄러진다. 그 minimum이 일반화가 약하면 그대로 갇힌다 (§4.4 double descent와 연결).
+- *고차원 saddle에서 stuck*: gradient를 정확히 계산하는 것의 부작용. saddle point에서 gradient가 정확히 0에 가까워 빠져나갈 push가 없다 (§3.4의 saddle GIF에서 SGD가 noise 덕에 결국 탈출하는 모습과 정반대).
+
+**언제 batch GD를 쓰는가?**
+
+신경망 학습에선 거의 안 쓴다. 데이터셋이 매우 작거나(<수백 개), 재현성 검증이 중요한 연구·디버깅 환경에서만 가끔. 학부 강의에서는 *수학적으로 깔끔해서* 자주 등장하지만, 실무에서 마주칠 일은 드물다 — 마주치는 건 거의 항상 *mini-batch SGD*(아래)다.
 
 **SGD (Stochastic GD)**: 매 step 데이터셋에서 무작위로 sample 하나만 골라 그 점에서의 gradient를 계산하고 update한다. update 식은 batch GD와 거의 같지만 평균이 빠진다.
 
