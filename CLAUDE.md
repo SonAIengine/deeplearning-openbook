@@ -24,6 +24,7 @@ GitHub 마크다운은 인라인 수식 `$...$` 안의 `_`도 마크다운 itali
 | escape brace + subscript `$\{...\}_{...}$` | 마크다운 escape 변환 + italic 매칭 | display math로 분리 |
 | 한 인라인 안에 underscore 3개 이상 | italic 매칭 충돌 | display math |
 | 따옴표로 감싼 인라인 `"$...$"` | GitHub `$` 경계 인식 실패 → 평문 표시 | 따옴표 제거 |
+| 인라인 닫는 `$` 바로 뒤 `)` `]` `}` (예: `$O(1/T^2)$).`) | 위와 같은 경계 인식 실패 | 한국어 조사·공백·마침표를 사이에 두거나 display math |
 | 조건부 표기 `P(Y\|X)` (raw `\|`) | 의미 모호 + 일부 환경 깨짐 | `P(Y \mid X)` |
 | 숫자 범위 `32~512` (단일 `~`) | GFM strikethrough 매칭 → 두 `~` 사이 취소선 | `32–512` (en dash) 또는 `32-512` |
 

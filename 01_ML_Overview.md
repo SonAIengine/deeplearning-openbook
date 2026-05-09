@@ -352,7 +352,7 @@ batch GD가 모든 sample의 평균 gradient $\frac{1}{N}\sum_{i=1}^N \nabla L_i
 
 오랫동안 사람들은 "신경망 학습은 local minima 때문에 어렵다"고 믿었다. 사실은 다르다. 고차원에서는 local minima보다 **saddle point**가 훨씬 흔하다.
 
-차원이 $d$인 critical point에서 hessian의 고유값이 모두 양수일 확률은 매우 작다 (각 차원이 독립적으로 양/음이라면 $2^{-d}$). 그래서 대부분의 critical point는 일부 차원에서 양, 일부에서 음 — saddle point다.
+차원이 $d$인 critical point에서 hessian의 고유값이 모두 양수일 확률은 매우 작다 — 각 차원이 독립적으로 양/음이라면 그 확률은 $2^{-d}$이다. 그래서 대부분의 critical point는 일부 차원에서 양, 일부에서 음 — saddle point다.
 
 GD는 saddle point에서 stuck될 위험이 있지만, SGD의 noise가 이걸 잘 탈출시킨다. 그래서 실제로 깊은 망 학습에서 진짜 문제는 local minima가 아니라 **plateau**(gradient가 너무 작아 진전이 없는 평탄 영역)다. Adam 같은 adaptive optimizer가 plateau에 도움이 된다.
 
@@ -376,7 +376,7 @@ $\beta = 0.9$가 거의 universal default. 0.99로 키우면 더 강한 관성, 
 
 $$v_t = \beta v_{t-1} + \nabla L(\theta_t - \eta \beta v_{t-1})$$
 
-수학적으로 더 빠른 수렴이 보장됨 (smooth convex case에서 $O(1/T)$ 대신 $O(1/T^2)$). 실무에서도 약간 우위 보고됨.
+수학적으로 더 빠른 수렴이 보장됨 — smooth convex case에서 $O(1/T)$ 대신 $O(1/T^2)$로 향상되며, 실무에서도 약간 우위 보고됨.
 
 ### 3.6 Adaptive LR — Adagrad, RMSProp, Adam
 

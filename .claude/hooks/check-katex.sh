@@ -70,6 +70,16 @@ $risky_cond
 "
 fi
 
+# 패턴 6: 인라인 수식 닫는 $ 뒤에 즉시 닫는 punctuation ) ] } — GitHub $ 경계 인식 실패
+# 예) "$O(1/T^2)$)" → 닫는 $가 인식 안 되어 평문 표시
+risky_close=$(grep -nE '\$[^$]+\$[\)\]\}]' "$file_path" || true)
+if [[ -n "$risky_close" ]]; then
+  warnings+="[KaTeX 위험] 인라인 수식 닫는 \$ 뒤에 즉시 ), ], } — GitHub의 \$ 경계 인식 실패 가능. 한국어 조사·공백·마침표를 사이에 두거나 display math로 분리:
+$risky_close
+
+"
+fi
+
 if [[ -n "$warnings" ]]; then
   {
     echo "===== KaTeX 위험 패턴 감지: $file_path ====="
