@@ -36,7 +36,7 @@
 
 | 주제 | 본문 연결 | 핵심 |
 |---|---|---|
-| [EDA — 분포에서 결정까지 (책)](topics/EDA/README.md) | §10.2 | 15장 분량의 EDA 책 — Tukey 철학부터 데이터 type별 진단·결정 매트릭스·함정·workflow까지 |
+| [EDA — 분포에서 결정까지 (hub)](topics/EDA/README.md) | §10.2 | 한 페이지 hub — 전체 EDA 그림 + 핵심 키워드별 sub-page 링크 (철학·분포·결측·이상치·상관·시각화·데이터 type·결정 매트릭스·함정·도구·workflow) |
 
 ## 각 문서 공통 구조
 
