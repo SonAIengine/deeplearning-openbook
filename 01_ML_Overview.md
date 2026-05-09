@@ -259,6 +259,11 @@ Loss $L(\theta)$는 보통 파라미터 수만큼 차원이 큰 비선형 함수
 
 그래서 **GD는 어려운 비선형 minimization을 작은 평면 minimization 수만 번으로 쪼개 푸는 알고리즘**이다. 현재 점에서 평면을 그리고, 가장 빠른 내리막으로 살짝 가고, 새 위치에서 다시 평면을 그리고, 또 살짝 가고… 반복. 발 밑만 보고 산을 내려가는 등산객의 전략과 정확히 같다.
 
+![Gradient descent converging from three starting points on a 3D loss surface](assets/gifs/gradient_descent.gif)
+
+> *서로 다른 세 시작점에서 출발한 GD가 같은 minimum으로 수렴하는 모습. 한 step씩 음의 gradient 방향으로 내려간다. 시작점에 따라 경로는 달라도 도착지는 같다 (이 함수가 단일 minimum이라 그렇고, 실제 신경망은 minimum이 여러 개라 시작점/seed에 따라 결과가 달라짐).*  
+> *Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Gradient_descent.gif), Jacopo Bertolotti, CC0.*
+
 이를 수학으로 정확히 표현한 것이 **Taylor 전개**다. 매끄러운 함수라면 임의의 점 $\theta_0$ 근처에서 다음과 같이 근사된다.
 
 $$L(\theta_0 + \delta) \approx L(\theta_0) + \nabla L(\theta_0)^T \delta$$
