@@ -294,7 +294,30 @@ $\eta$가 너무 작으면: 진전이 거의 없거나 너무 느리다. 또 sad
 
 전체 데이터로 한 번에 gradient를 구해 update하는 게 batch GD. 메모리·연산이 비싸고 update가 드물다. 또 **noise가 없어서 sharp minima로 빠지기 쉽다**.
 
-**SGD (Stochastic GD)**: sample 하나로 gradient 추정. 매우 빠르고 noisy. 한 sample은 진짜 gradient의 unbiased estimate지만 분산이 크다. 이 noise가 의외의 효과 — local minimum이나 saddle point에서 탈출하는 데 도움이 된다.
+**SGD (Stochastic GD)**: 매 step 데이터셋에서 무작위로 sample 하나만 골라 그 점에서의 gradient를 계산하고 update한다. update 식은 batch GD와 거의 같지만 평균이 빠진다.
+
+$$\theta_{t+1} = \theta_t - \eta \nabla L_i(\theta_t) \quad (i\text{는 매 step 무작위 sample})$$
+
+batch GD가 모든 sample의 평균 gradient $\frac{1}{N}\sum_{i=1}^N \nabla L_i$를 매 step 계산했다면, SGD는 그 평균을 **한 sample로 거칠게 추정**한다. "stochastic(확률적)"이라 부르는 이유는 매 step의 gradient가 *어떤 sample을 뽑았느냐*에 따라 흔들리는 random variable이기 때문이다. 다행히 모든 sample 위에서 *평균* 내면 batch GD의 진짜 gradient와 같다 — 통계 용어로 **unbiased estimate**. 즉 long run으로는 batch GD와 같은 방향으로 간다.
+
+**장점**
+
+- *연산 비용*: 한 step에 한 sample만 보면 되니 매우 싸다. batch GD가 한 step 만들 시간에 SGD는 N번 step을 만든다 — *같은 시간 안에 N배의 update*.
+- *메모리*: 한 sample만 올리면 되니 데이터셋이 GPU·RAM에 안 들어가도 학습 가능.
+- *online learning*: 데이터가 스트림으로 흘러들어오는 상황(추천 시스템, 광고 등)에 그대로 적용 가능. batch GD는 이게 안 된다.
+
+**단점**
+
+- *분산이 크다*: 한 sample의 gradient는 진짜 gradient에서 멀리 벗어날 수 있어 update 방향이 매 step 들쭉날쭉. 수렴 경로가 zigzag로 그려진다.
+- *수렴 불안정*: 같은 LR에서 batch GD가 minimum에 정착할 때 SGD는 그 주변을 계속 떠돈다. 안정 수렴을 보장하려면 LR을 점차 감소시켜야 한다 (Robbins-Monro 조건: $\sum \eta_t = \infty, \sum \eta_t^2 < \infty$ — *충분히 큰 합으로 어디든 갈 수 있되, 제곱 합은 유한해서 결국 멈춘다*).
+
+**그런데 noise가 양날의 칼이다** — 단점이 곧 장점이 되는 지점이 있다.
+
+- *saddle point 탈출*: 고차원에서 매우 흔한 saddle point에서 batch GD는 gradient가 0에 가까워 stuck되지만, SGD의 random noise는 평형점을 슬쩍 흔들어 탈출시킨다. (위 §3.4 saddle 그림에서 SGD가 결국 탈출하는 게 이 효과.)
+- *sharp minima 회피*: 너무 좁고 가파른 minimum은 일반화가 약한 경향이 있다(§4.4 double descent와 연결). SGD의 noise는 그런 minimum 안에 머물지 못하게 해 부드러운(flat) minimum으로 이동시킨다 — *암묵적 정규화*의 한 형태.
+- *batch GD의 단점은 noise가 없어서다*: 위 §3.3 첫 단락에서 batch GD가 sharp minima로 빠지기 쉽다고 한 게 이 맥락이다. SGD의 zigzag가 단순한 부작용이 아니라 일반화에 도움이 된다는 것.
+
+**실무 표기 주의**: 논문·코드에서 "SGD"라고 부르면 거의 항상 아래의 *mini-batch SGD*를 가리킨다. 순수 sample-한-개짜리 SGD는 GPU 병렬을 활용 못해서 실무에서 거의 안 쓴다. PyTorch의 `torch.optim.SGD`도 호출 시 batch 단위로 작동하므로 사실은 mini-batch SGD다. 이름과 실제가 어긋나는 흔한 함정.
 
 **Mini-batch SGD**: 32–512개씩. 둘의 절충. GPU에서 병렬 잘 돌고, noise가 적당히 있어 일반화 좋고, 표준 선택이 됐다.
 
