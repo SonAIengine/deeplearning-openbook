@@ -19,9 +19,9 @@ Frank Anscombe는 1973년 *American Statistician*에 짧은 논문 하나를 실
 
 그런데 산점도를 그려보면:
 
-- **Dataset I**: 깨끗한 선형 관계 + 정규 잔차 → 회귀가 잘 어울림
+- **Dataset I**: 깨끗한 선형 관계 + 정규 잔차(예측 - 실제값이 정규분포를 따름) → 회귀가 잘 어울림
 - **Dataset II**: 명백한 *2차 곡선*. 선형 회귀가 부적절
-- **Dataset III**: 거의 완벽한 선형이지만 *outlier 1개*가 회귀선을 끌어당김
+- **Dataset III**: 거의 완벽한 선형이지만 *outlier 1개*가 회귀선(데이터 점들을 가장 잘 통과하는 직선)을 끌어당김
 - **Dataset IV**: x가 거의 한 값에 모여 있는데 *outlier 한 점*이 모든 신호를 만듦
 
 네 데이터셋이 *완전히 다른* 함수 관계 / 다른 issue를 가지고 있는데, 통계량은 똑같다. 만약 평균·분산·상관계수만 보고 회귀를 적합시켰다면, *4개 데이터셋 모두에 같은 직선*을 그어 주고 "잘 됐다"고 했을 것이다. 실제로는 II에는 2차 모델이, III·IV에는 outlier 처리가 필요하다.
@@ -32,7 +32,7 @@ Frank Anscombe는 1973년 *American Statistician*에 짧은 논문 하나를 실
 
 ## 2.2 2017년, Datasaurus Dozen — 공룡으로 못박기
 
-Anscombe의 사례가 너무 약하다고 느낀 사람이 있었다. Justin Matejka와 George Fitzmaurice는 2017년 *"Same Stats, Different Graphs"*라는 논문에서, **simulated annealing**으로 다음을 보였다 — *통계량을 정확히 보존하면서 분포를 임의로 바꿀 수 있다*.
+Anscombe의 사례가 너무 약하다고 느낀 사람이 있었다. Justin Matejka와 George Fitzmaurice는 2017년 *"Same Stats, Different Graphs"*라는 논문에서, **simulated annealing**(랜덤 탐색에 *식어가는 온도* 비유로 점차 안정화시키는 최적화 기법)으로 다음을 보였다 — *통계량을 정확히 보존하면서 분포를 임의로 바꿀 수 있다*.
 
 원래 데이터는 Alberto Cairo가 그린 **공룡 모양 산점도**(Datasaurus). 거기서 출발해, 평균·분산·상관을 *소수점 2자리까지 일치시키면서* 점들을 옮겼다. 결과는:
 
@@ -65,10 +65,10 @@ df.describe()
 
 이걸 보고 끝났다고 생각하면 위험. 다음을 *반드시* 봐야 한다.
 
-- **히스토그램**: 분포 모양 (대칭, skewed, bimodal, long-tail)
-- **box plot**: outlier와 IQR
+- **히스토그램**: 분포 모양 (대칭, skewed(좌우 비대칭), bimodal(봉우리 두 개), long-tail(꼬리 두꺼움))
+- **box plot**: outlier와 IQR(interquartile range — Q3-Q1, 가운데 50%의 폭)
 - **산점도**: feature와 target의 비선형 관계
-- **Q-Q plot**: 정규성 여부 (3장에서 깊이)
+- **Q-Q plot** (quantile-quantile plot): 데이터 분위수와 정규분포 분위수를 비교 — 점이 직선이면 정규. 정규성 여부 (3장에서 깊이)
 
 ### 함의 2: 상관계수(Pearson)는 *선형* 상관만 본다
 
@@ -76,8 +76,8 @@ Pearson r = 0인데 *완벽한 비선형 관계*가 있을 수 있다 (예: y = 
 
 따라서:
 
-- **Spearman 또는 Kendall 상관**: 단조 관계 잡음
-- **Mutual Information**: 임의의 의존성
+- **Spearman 상관** (값을 *순위*로 변환 후 Pearson) 또는 **Kendall τ** (두 변수의 짝이 같은 방향인 비율): 단조(monotonic — 한 변수가 커지면 다른 변수도 일관되게 증가/감소) 관계 잡음
+- **Mutual Information** (정보 이론적 의존성 — 한 변수를 알면 다른 변수의 불확실성이 얼마나 줄어드는가): 선형/비선형 모두 잡는 일반 측도
 - **산점도**: 그냥 눈으로 보기
 
 (자세히는 6장 상관성)
@@ -86,13 +86,13 @@ Pearson r = 0인데 *완벽한 비선형 관계*가 있을 수 있다 (예: y = 
 
 Anscombe Dataset III·IV가 이 경우. 평균·표준편차·회귀선 모두 outlier에 끌려간다. EDA에서 outlier를 *반드시* 시각적으로 확인해야 하는 이유.
 
-robust statistics (median, IQR, Mahalanobis distance)가 outlier에 덜 민감하지만, 그 전에 *outlier 자체를 인지*해야 한다.
+robust statistics (median, IQR, **Mahalanobis distance** — 변수 간 상관을 고려한 다변량 거리. 단순 유클리드 거리보다 outlier 잡기에 강함)가 outlier에 덜 민감하지만, 그 전에 *outlier 자체를 인지*해야 한다.
 
 ### 함의 4: 자동 파이프라인의 위험
 
 `fit → score → compare`만 하는 자동 ML 파이프라인은 Anscombe·Datasaurus형 데이터를 *완벽히 놓친다*. 학습·평가가 모두 동일 분포 가정 위에서 동작하기 때문에 분포가 잘못된 줄 알 길이 없다.
 
-이게 EDA를 *수작업으로* 해야 하는 이유이고, AutoML이 만능이 아닌 이유.
+이게 EDA를 *수작업으로* 해야 하는 이유이고, **AutoML**(데이터를 넣으면 모델 선택·hyperparameter·feature engineering까지 자동화해 주는 도구. H2O AutoML, AutoSklearn 등)이 만능이 아닌 이유.
 
 ---
 
@@ -102,29 +102,29 @@ ML 프로젝트 시작 시 *반드시* 그려야 하는 최소 plot 세트.
 
 ### 모든 수치 변수에 대해
 
-1. **히스토그램** (또는 KDE) — 분포 모양
+1. **히스토그램** (또는 **KDE**, kernel density estimation — 히스토그램의 부드러운 버전) — 분포 모양
 2. **box plot** — outlier와 IQR
 3. **Q-Q plot vs 정규분포** — 정규성 여부
 
 ### 모든 카테고리 변수에 대해
 
 4. **bar chart of value counts** — 카테고리 빈도
-5. **target과의 cross-tab** (분류) 또는 **box plot by category** (회귀)
+5. **target과의 cross-tab** (카테고리 × 클래스 행렬, 분류) 또는 **box plot by category** (회귀)
 
 ### feature 간
 
 6. **상관 heatmap** (Pearson + Spearman 둘 다)
-7. **pair plot** (매우 작은 데이터·소수 변수일 때)
+7. **pair plot** (모든 변수 쌍에 대한 산점도 매트릭스 — 변수 < 10일 때만 가능)
 
 ### Target과 feature
 
 8. **각 feature vs target 산점도** (회귀) 또는 **box plot** (분류)
-9. **feature importance** (단순 모델로 빠르게)
+9. **feature importance** (어떤 feature가 target 예측에 얼마나 기여하는가 — 단순 모델로 빠르게 측정. tree feature importance, permutation importance 등)
 
 ### 시계열이라면
 
-10. **시간 vs target** plot (trend·seasonality)
-11. **자기상관 (ACF/PACF)**
+10. **시간 vs target** plot (trend(추세) · seasonality(주기성))
+11. **자기상관** (**ACF**, autocorrelation function — 시점 t와 t-k의 상관) (**PACF**, partial autocorrelation — 사이의 시점 영향을 제거한 상관)
 
 이 11종을 *프로젝트 시작 첫 30분에* 모두 그리면, Anscombe·Datasaurus형 함정의 99%를 피한다. 코드는 8장(표 데이터)·14장(도구)에서.
 

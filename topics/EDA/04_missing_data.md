@@ -52,7 +52,7 @@ $$P(\text{missing} \mid X, Y) = P(\text{missing} \mid X_{\text{observed}})$$
 
 - **예 1**: 우울감이 매우 심한 사람들이 우울감 설문 자체를 빼먹는다. → "우울하다"는 사실이 결측의 원인.
 - **예 2**: 매우 부유한 사람들이 자산 공개를 거부한다. → 자산 자체가 결측 원인.
-- **처방**: 가장 어려운 경우. **결측 indicator 자체를 feature로 추가**하는 게 표준. 또는 도메인 모델링 (selection model, pattern mixture).
+- **처방**: 가장 어려운 경우. **결측 indicator 자체를 feature로 추가**하는 게 표준. 또는 도메인 모델링 — **selection model**(결측 메커니즘 자체를 별도 모델로 두고 likelihood에 포함), **pattern mixture**(결측 패턴별로 다른 분포를 가정해 mixture로 모델링).
 
 ### 메커니즘 진단
 
@@ -98,7 +98,7 @@ df['x'] = df['x'].fillna(-999)
 
 ### 4. KNN Imputation
 
-비슷한 K개 이웃의 값으로 채움.
+**KNN** (K-Nearest Neighbors) — 가까운 K개 이웃을 찾는 알고리즘. 여기서는 "비슷한 다른 sample을 찾아 그 값으로 결측 채우기"에 응용.
 
 - **장점**: 변수 간 관계 보존, 비선형 패턴 처리
 - **단점**: 거리 정의 필요 (mixed type 어려움), 큰 데이터에서 느림
@@ -150,7 +150,7 @@ df['x'].interpolate(method='linear')
 
 ### 8. Deep Learning Imputation
 
-VAE, GAN, denoising autoencoder로 결측 채움.
+**VAE** (variational autoencoder — 확률 분포를 학습하는 generative 모델), **GAN** (generative adversarial network — 생성자·판별자가 경쟁), **denoising autoencoder** (일부러 noise를 더한 입력에서 원본을 복원하는 학습)로 결측 채움.
 
 - **장점**: 복잡한 패턴, 큰 고차원 데이터
 - **단점**: 모델·튜닝 부담, 작은 데이터에 overkill
@@ -181,7 +181,7 @@ MNAR 강한 의심
     └── interpolation (시각화·EDA용)
 
 이미지 결측 픽셀
-    └── inpainting 모델 또는 mask로 처리
+    └── inpainting 모델 (빈 영역을 주변 픽셀로 자연스럽게 채워주는 생성 모델) 또는 mask로 처리
 
 텍스트 결측
     └── empty string + indicator
@@ -264,7 +264,7 @@ X_test_imp = imputer.transform(X_test)
 
 ### (2) 평균 imputation 후 통계 검정
 
-평균으로 채우면 분산이 인위적으로 줄어 들어 t-test, F-test의 p값이 *너무 작아짐*. 통계 추론에 쓸 거면 multiple imputation 필요.
+평균으로 채우면 분산이 인위적으로 줄어 들어 t-test(두 그룹 평균 차이 검정), F-test(분산비 검정)의 p값이 *너무 작아짐*. 통계 추론에 쓸 거면 multiple imputation 필요.
 
 ### (3) "결측 = 0" 자동 처리
 
