@@ -310,6 +310,11 @@ $\eta$가 너무 작으면: 진전이 거의 없거나 너무 느리다. 또 sad
 
 GD는 saddle point에서 stuck될 위험이 있지만, SGD의 noise가 이걸 잘 탈출시킨다. 그래서 실제로 깊은 망 학습에서 진짜 문제는 local minima가 아니라 **plateau**(gradient가 너무 작아 진전이 없는 평탄 영역)다. Adam 같은 adaptive optimizer가 plateau에 도움이 된다.
 
+![Optimizers escaping a saddle point — SGD/Momentum struggle, adaptive methods (Adagrad/RMSProp/Adadelta) escape quickly](assets/gifs/optimizers_saddle.gif)
+
+> *Saddle point에서 각 optimizer의 행동. SGD는 거의 멈춰 있고, Momentum/NAG도 한참 헤매다 탈출한다. 반면 Adagrad·RMSProp·Adadelta 같은 adaptive 방법은 gradient의 dimension별 크기를 normalize하므로 saddle 탈출이 빠르다 — 이게 §3.6에서 다룰 adaptive LR의 동기 중 하나.*  
+> *Source: Alec Radford, via [Sebastian Ruder's blog](https://www.ruder.io/optimizing-gradient-descent/). 교육·인용 목적 사용.*
+
 ### 3.5 Momentum — 관성을 더하기
 
 순수 SGD는 골짜기 모양 loss에서 진동한다. 폭이 좁은 방향으로는 빠르게 왔다갔다, 긴 방향으로는 천천히. 이걸 해결하는 게 momentum.
@@ -356,6 +361,11 @@ Default: $\beta_1 = 0.9, \beta_2 = 0.999, \epsilon = 10^{-8}$. LR 1e-3이 거의
 **왜 Adam이 좋은가?** 파라미터별 effective LR이 자동 조정되고, momentum도 들어 있고, hyperparameter 튜닝 부담이 적다. "잘 모르겠으면 Adam"이 거의 default 조언이 됐다.
 
 **왜 Adam이 항상 최선이 아닌가?** ImageNet 같은 task에서 SGD+momentum이 약간 더 일반화 잘하는 보고가 많다. Adam이 sharp minima로 가는 경향이라는 분석. 또 Adam의 실제 weight decay 처리가 부정확해서 AdamW가 등장했다.
+
+![Optimizer trajectories on Beale's function contours — comparison of SGD, Momentum, NAG, Adagrad, Adadelta, RMSProp](assets/gifs/optimizers_beale.gif)
+
+> *Beale 함수 등고선 위에서 각 optimizer의 궤적. Adagrad·Adadelta·RMSProp은 가장 빠르게 minimum으로 향하고, Momentum과 NAG는 처음엔 길을 잘못 들지만 NAG가 momentum보다 빨리 보정한다. 순수 SGD는 가장 느리다. 이 한 GIF가 §3.5–3.6 전체의 직관을 압축한다.*  
+> *Source: Alec Radford, via [Sebastian Ruder's blog](https://www.ruder.io/optimizing-gradient-descent/). 교육·인용 목적 사용.*
 
 ### 3.7 AdamW — weight decay의 정확한 처리
 
