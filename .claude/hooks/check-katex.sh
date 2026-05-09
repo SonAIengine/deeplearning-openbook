@@ -41,6 +41,35 @@ $risky_brace
 "
 fi
 
+# 패턴 3: 숫자~숫자 등 단일 ~ 범위 표기 (GFM strikethrough로 해석되어 두 ~ 사이가 취소선)
+# 코드블록 내부는 제외 (백틱 라인은 검사 생략)
+risky_tilde=$(grep -nE '[A-Za-z0-9.)]~[A-Za-z0-9(]' "$file_path" | grep -v '^\s*```' || true)
+if [[ -n "$risky_tilde" ]]; then
+  warnings+="[GFM 위험] 단일 ~ 범위 표기 — strikethrough로 해석됨. en dash(–) 또는 hyphen(-) 사용:
+$risky_tilde
+
+"
+fi
+
+# 패턴 4: 따옴표로 감싼 인라인 수식 ("$...$") — GitHub KaTeX의 $ 경계 인식 실패
+risky_quoted=$(grep -nE '"\$[^$]+\$"' "$file_path" || true)
+if [[ -n "$risky_quoted" ]]; then
+  warnings+="[KaTeX 위험] 따옴표로 감싼 인라인 수식 \"\$...\$\" — GitHub의 \$ 경계 인식 실패. 따옴표 제거하거나 평문 표기:
+$risky_quoted
+
+"
+fi
+
+# 패턴 5: 조건부 확률 P(...|...) 패턴 (절댓값과 구분 — 함수 인자 안의 |)
+# 절댓값 |x|는 정상이지만 P(Y|X), P(A|B,C)는 \mid 권장 (의미 명확화 + 일부 환경 깨짐 회피)
+risky_cond=$(grep -nE '\$[^$]*[A-Za-z]\([A-Za-z][^$|]*\|[^$|]*\)' "$file_path" || true)
+if [[ -n "$risky_cond" ]]; then
+  warnings+="[KaTeX 권장] 조건부 확률 표기 P(...|...) — \\mid 사용 권장 (예: P(Y \\mid X)):
+$risky_cond
+
+"
+fi
+
 if [[ -n "$warnings" ]]; then
   {
     echo "===== KaTeX 위험 패턴 감지: $file_path ====="
