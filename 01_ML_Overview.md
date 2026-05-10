@@ -172,6 +172,15 @@ $$L_\delta(y, \hat{y}) = \begin{cases} \frac{1}{2}(y - \hat{y})^2 & |y - \hat{y}
 
 작은 오차엔 제곱(부드러움), 큰 오차엔 절대값(robust). 실무에서 자주 쓰는 좋은 default다.
 
+<img src="assets/images/huber_loss.svg" alt="Huber loss (green) vs squared error loss (blue) plotted against the residual y - f(x)" width="520">
+
+> *세 loss를 한 그림으로 비교. x축은 잔차 $y - f(x)$, y축은 loss 값.*
+> - **파란선 (MSE / squared error)**: 잔차가 커질수록 *제곱*으로 폭발 → outlier가 loss를 지배해 모델이 그쪽으로 끌려감.
+> - **녹색선 (Huber, $\delta = 1$)**: 작은 잔차 영역에선 MSE와 거의 같은 부드러운 곡선이지만, $|y-f(x)| > \delta$를 넘으면 *직선*으로 꺾여 outlier 영향이 선형으로 제한됨.
+> - MAE는 이 그림에 없지만 모든 영역에서 *직선* — Huber의 큰 잔차 영역과 같은 모양. Huber = MSE의 부드러움 + MAE의 robust.
+>
+> *Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Huber_loss.svg), Qwertyus, CC BY-SA 4.0.*
+
 $\delta$는 hyperparameter — *default $\delta = 1.0$*(정규화된 데이터의 1 std). outlier 多→작게(0.3–0.5), 가우시안 근접→크게(3–5). $\delta \to \infty$이면 MSE, $\delta \to 0$이면 MAE에 수렴. → 표준값·왜·함정 풀이는 [hyperparameters/loss.md#huber-δ](topics/hyperparameters/loss.md#huber-δ).
 
 여기서 "**가우시안 가정이 합리적**"이라는 건 잔차 히스토그램이 종 모양·좌우 대칭이고 큰 outlier가 드물다는 뜻이다. 노이즈가 여러 독립 요인의 합으로 만들어진다면 중심극한정리로 자연스럽게 그쪽 모양이 된다 — 측정 오차의 합, 모델이 못 잡는 자잘한 비선형 효과의 합 등. 반대로 측정 장비 결함으로 가끔 황당한 값이 섞이거나(fat tail), 분포가 한쪽으로 쏠려 있으면(skewed) 가정이 깨진 것이고, 그때는 MAE/Huber로 갈아타는 게 통계적으로 옳다.
