@@ -142,48 +142,26 @@ $$\mathcal{L}(\theta) = \frac{1}{N} \sum_{i=1}^N L(y_i, f_\theta(x_i))$$
 
 ### 2.2 회귀 loss — MSE, MAE, Huber의 사고 흐름
 
-**MSE (Mean Squared Error)**: $L = \frac{1}{N} \sum (y_i - \hat{y}_i)^2$.
+회귀 loss는 *잔차 $r_i = y_i - \hat{y}_i$를 어떤 도형으로 만들어 합치느냐*의 차이다 — MSE는 정사각형의 면적, MAE는 직선의 길이, Huber는 둘의 절충. → **시각적 직관 + 정사각형 면적으로 보기**: [topics/regression_loss/01_geometry.md](topics/regression_loss/01_geometry.md).
 
-가장 흔히 쓰지만 왜 그런가? 두 가지 정당화가 있다.
+**MSE (Mean Squared Error)**: $L = \frac{1}{N} \sum (y_i - \hat{y}_i)^2$. 잔차를 *제곱*해서 더한다.
 
-첫째, 가우시안 noise 가정 아래에서 MLE다. $y = f(x) + \epsilon$, $\epsilon \sim \mathcal{N}(0, \sigma^2)$이면 negative log-likelihood가 정확히 MSE에 비례한다. 그래서 MSE는 통계적으로 "noise가 가우시안일 때 올바른" 선택이다.
+- *왜 쓰는가*: 가우시안 noise 가정 아래의 MLE($y = f(x) + \epsilon, \epsilon \sim \mathcal{N}(0, \sigma^2)$이면 NLL이 정확히 MSE에 비례). 즉 *loss 선택은 noise 모델의 표명*이다 — MSE = "잔차가 정규분포일 거라 믿는다".
+- *장점*: 미분 가능, hessian 정의됨, 최적화 이론 깔끔.
+- *단점*: **이상치에 매우 민감**. 오차 10인 한 점이 오차 1인 점 100개와 같은 영향(제곱이라 정사각형 면적이 100배). 가우시안 가정이 깨지면 학습이 outlier에 끌려간다.
 
-이걸 풀어 쓰면, 한 점 $(x_i, y_i)$가 관측될 likelihood가 정규분포 PDF로 주어지고, 모든 점에 대한 negative log-likelihood가 다음으로 정리된다.
+**MAE (Mean Absolute Error)**: $L = \frac{1}{N} \sum |y_i - \hat{y}_i|$. 잔차의 *절댓값*을 더한다.
 
-$$-\log L(\theta) = \frac{1}{2\sigma^2} \sum_{i=1}^N (y_i - f_\theta(x_i))^2 + \text{const}$$
+- *왜 쓰는가*: 라플라스 noise 가정 아래의 MLE. 이상치에 **robust** (잔차 영향이 선형이라 outlier가 정사각형이 아니라 직선만큼만).
+- *단점*: 0에서 미분 불가능 → 학습 동역학 부드럽지 않음. minimizer가 평균이 아니라 중앙값이라 분포 모양에 따라 평균과 다른 곳을 학습.
 
-뒷항이 정확히 MSE의 형태다. 즉 **MSE를 줄이는 행위 = 가우시안 noise 모델 아래에서 "이 데이터를 가장 그럴듯하게 설명하는 $\theta$"를 찾는 행위**. 임의로 고른 휴리스틱이 아니라 noise 모델 위에서 유도된 추정량이라는 뜻.
-
-이 시각이 중요한 이유는 **loss 선택이 곧 noise 모델의 표명**이기 때문이다. MSE를 쓴다 = "잔차가 정규분포 모양일 거라 믿는다", MAE를 쓴다 = "라플라스(꼬리 두꺼운) 분포일 거라 믿는다", CE를 쓴다 = "출력이 categorical 분포일 거라 믿는다". 그래서 데이터의 실제 잔차 분포가 가정에서 멀어지면 — 예를 들어 outlier가 두텁게 섞여 가우시안 가정이 깨지면 — 같은 MSE를 써도 통계적 정당성이 사라지고 학습이 outlier에 끌려간다.
-
-둘째, **계산이 부드럽다**. 미분 가능, 한 점에서 미분 가능, hessian도 잘 정의됨. 최적화 이론이 깔끔히 적용된다.
-
-단점이 결정적이다 — **이상치에 매우 민감**하다. 오차를 제곱하므로, 오차 10인 한 점이 오차 1인 점 100개와 같은 영향을 끼친다. 데이터에 노이즈가 많거나 측정 오류가 섞여 있으면 MSE는 그 outlier에 끌려간다.
-
-**MAE (Mean Absolute Error)**: $L = \frac{1}{N} \sum |y_i - \hat{y}_i|$.
-
-오차의 절대값. 이상치에 robust하다. 통계적으로는 라플라스 noise 가정 아래의 MLE.
-
-단점은 **0에서 미분 불가능**이라는 점. 정확히 정답을 맞히는 순간 미분이 정의되지 않는다 (subgradient를 쓰면 되긴 하지만 학습 동역학이 부드럽지 않다). 또 minimizer가 평균이 아니라 **중앙값(median)**이라 분포의 모양에 따라 평균과 다른 곳을 학습한다.
-
-**Huber loss**: MSE와 MAE의 절충. $|y - \hat{y}| \le \delta$이면 MSE, 그 밖이면 MAE.
+**Huber loss**: MSE와 MAE의 절충. $|r| \le \delta$이면 MSE처럼, $|r| > \delta$이면 MAE처럼.
 
 $$L_\delta(y, \hat{y}) = \begin{cases} \frac{1}{2}(y - \hat{y})^2 & |y - \hat{y}| \le \delta \\ \delta |y - \hat{y}| - \frac{1}{2}\delta^2 & \text{otherwise} \end{cases}$$
 
-작은 오차엔 제곱(부드러움), 큰 오차엔 절대값(robust). 실무에서 자주 쓰는 좋은 default다.
+작은 오차엔 부드러움(MSE), 큰 오차엔 robust(MAE). 실무 default로 자주. $\delta$는 hyperparameter — *default 1.0*. 표준값·튜닝은 [hyperparameters/loss.md#huber-δ](topics/hyperparameters/loss.md#huber-δ), 시각적 직관(loss curve, 잔차 도형)은 [topics/regression_loss/01_geometry.md](topics/regression_loss/01_geometry.md#1.4-huber).
 
-<img src="assets/images/huber_loss.svg" alt="Huber loss (green) vs squared error loss (blue) plotted against the residual y - f(x)" width="520">
-
-> *세 loss를 한 그림으로 비교. x축은 잔차 $y - f(x)$, y축은 loss 값.*
-> - **파란선 (MSE / squared error)**: 잔차가 커질수록 *제곱*으로 폭발 → outlier가 loss를 지배해 모델이 그쪽으로 끌려감.
-> - **녹색선 (Huber, $\delta = 1$)**: 작은 잔차 영역에선 MSE와 거의 같은 부드러운 곡선이지만, $|y-f(x)| > \delta$를 넘으면 *직선*으로 꺾여 outlier 영향이 선형으로 제한됨.
-> - MAE는 이 그림에 없지만 모든 영역에서 *직선* — Huber의 큰 잔차 영역과 같은 모양. Huber = MSE의 부드러움 + MAE의 robust.
->
-> *Source: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Huber_loss.svg), Qwertyus, CC BY-SA 4.0.*
-
-$\delta$는 hyperparameter — *default $\delta = 1.0$*(정규화된 데이터의 1 std). outlier 多→작게(0.3–0.5), 가우시안 근접→크게(3–5). $\delta \to \infty$이면 MSE, $\delta \to 0$이면 MAE에 수렴. → 표준값·왜·함정 풀이는 [hyperparameters/loss.md#huber-δ](topics/hyperparameters/loss.md#huber-δ).
-
-여기서 "**가우시안 가정이 합리적**"이라는 건 잔차 히스토그램이 종 모양·좌우 대칭이고 큰 outlier가 드물다는 뜻이다. 노이즈가 여러 독립 요인의 합으로 만들어진다면 중심극한정리로 자연스럽게 그쪽 모양이 된다 — 측정 오차의 합, 모델이 못 잡는 자잘한 비선형 효과의 합 등. 반대로 측정 장비 결함으로 가끔 황당한 값이 섞이거나(fat tail), 분포가 한쪽으로 쏠려 있으면(skewed) 가정이 깨진 것이고, 그때는 MAE/Huber로 갈아타는 게 통계적으로 옳다.
+"**가우시안 가정이 합리적**"이라는 건 잔차가 종 모양·대칭, outlier 드묾이라는 뜻 — 측정 오차의 합 같은 *여러 독립 요인의 합*은 CLT로 자연히 정규에 수렴. 반대로 fat tail / skewed면 가정이 깨진 것 → MAE/Huber로.
 
 **언제 무엇을 쓰는가?**
 - 데이터가 깨끗하고 가우시안 가정 합리적 (잔차가 종 모양·대칭, outlier 드묾) → MSE

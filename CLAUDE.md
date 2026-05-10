@@ -92,12 +92,15 @@ deeplearning-openbook/
 │   │   ├── README.md                                # hub — 한 페이지에 EDA 전체 그림
 │   │   ├── 00_quick_reference.md
 │   │   └── 01_*.md ... 15_*.md                       # 키워드별 sub-page
-│   └── hyperparameters/                              # hub-and-spoke 구조
-│       ├── README.md                                # 빠른 참조 + 튜닝 우선순위
-│       ├── loss.md                                  # Huber/Focal/LabelSmooth/Triplet/Contrastive
-│       ├── optimizer.md                             # Momentum β, Adam (β₁/β₂/ε/LR)
-│       ├── regularization.md                        # Weight decay λ, Dropout p
-│       └── lr_schedule.md                           # Step/Cosine/Warmup/OneCycle/Cyclic
+│   ├── hyperparameters/                              # hub-and-spoke 구조
+│   │   ├── README.md                                # 빠른 참조 + 튜닝 우선순위
+│   │   ├── loss.md                                  # Huber/Focal/LabelSmooth/Triplet/Contrastive
+│   │   ├── optimizer.md                             # Momentum β, Adam
+│   │   ├── regularization.md                        # Weight decay λ, Dropout p
+│   │   └── lr_schedule.md                           # 5종 schedule
+│   └── regression_loss/                              # hub-and-spoke 구조
+│       ├── README.md                                # 회귀 loss 직관 hub
+│       └── 01_geometry.md                           # 잔차 도형 = MSE/MAE/Huber 시각적 의미
 ├── assets/
 │   ├── gifs/                                         # 동적 시각자료
 │   └── images/                                       # 정적 시각자료 (svg, png)

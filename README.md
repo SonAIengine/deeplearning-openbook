@@ -38,6 +38,7 @@
 |---|---|---|
 | [EDA — 분포에서 결정까지 (hub)](topics/EDA/README.md) | §10.2 | 한 페이지 hub — 전체 EDA 그림 + 핵심 키워드별 sub-page 링크 (철학·분포·결측·이상치·상관·시각화·데이터 type·결정 매트릭스·함정·도구·workflow) |
 | [Hyperparameters — 표준값과 결정 가이드](topics/hyperparameters/README.md) | §2·§3·§5 | Loss(δ/γ/α/margin/τ), Optimizer(β/Adam), Regularization(λ/p), LR schedule 5종 — 표준값·왜 그 값·언제 키우고 줄이나·함정 |
+| [회귀 loss의 기하학적 직관](topics/regression_loss/README.md) | §2.2 | 잔차를 도형으로 보기 — MSE는 정사각형 면적, MAE는 직선 길이, Huber는 절충. outlier 민감성의 시각적 이유 |
 
 ## 각 문서 공통 구조
 
