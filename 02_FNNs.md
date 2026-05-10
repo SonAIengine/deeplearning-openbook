@@ -43,7 +43,13 @@ UAT는 1단계만 보장한다. 2단계는 별개. 그래서 "1 hidden layer로 
 
 Frank Rosenblatt의 1957년 모델. 입력 $x$, 가중치 $w$, 임계값 $b$:
 
-$$y = \begin{cases} 1 & \text{if } w^T x + b > 0 \\ 0 & \text{otherwise} \end{cases}$$
+$$
+y =
+\begin{cases}
+1 & \text{if } w^T x + b > 0 \\[2pt]
+0 & \text{otherwise}
+\end{cases}
+$$
 
 기하학적으로 이건 **초평면(hyperplane)으로 입력 공간을 둘로 나누는 분류기**다. $w$가 초평면의 법선 벡터, $b$가 평면의 위치.
 

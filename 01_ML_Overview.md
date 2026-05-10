@@ -142,7 +142,7 @@ $$\mathcal{L}(\theta) = \frac{1}{N} \sum_{i=1}^N L(y_i, f_\theta(x_i))$$
 
 ### 2.2 회귀 loss — MSE, MAE, Huber의 사고 흐름
 
-회귀 loss는 *잔차 $r_i = y_i - \hat{y}_i$를 어떤 도형으로 만들어 합치느냐*의 차이다 — MSE는 정사각형의 면적, MAE는 직선의 길이, Huber는 둘의 절충. → **시각적 직관 + 정사각형 면적으로 보기**: [topics/regression_loss/01_geometry.md](topics/regression_loss/01_geometry.md).
+회귀 loss는 잔차 $r_i = y_i - \hat{y}_i$를 **어떤 도형으로 만들어 합치느냐**의 차이다 — MSE는 정사각형의 면적, MAE는 직선의 길이, Huber는 둘의 절충. → **시각적 직관 + 정사각형 면적으로 보기**: [topics/regression_loss/01_geometry.md](topics/regression_loss/01_geometry.md).
 
 **MSE (Mean Squared Error)**: $L = \frac{1}{N} \sum (y_i - \hat{y}_i)^2$. 잔차를 *제곱*해서 더한다.
 
@@ -157,7 +157,13 @@ $$\mathcal{L}(\theta) = \frac{1}{N} \sum_{i=1}^N L(y_i, f_\theta(x_i))$$
 
 **Huber loss**: MSE와 MAE의 절충. $|r| \le \delta$이면 MSE처럼, $|r| > \delta$이면 MAE처럼.
 
-$$L_\delta(y, \hat{y}) = \begin{cases} \frac{1}{2}(y - \hat{y})^2 & |y - \hat{y}| \le \delta \\ \delta |y - \hat{y}| - \frac{1}{2}\delta^2 & \text{otherwise} \end{cases}$$
+$$
+L_\delta(y, \hat{y}) =
+\begin{cases}
+\tfrac{1}{2}(y - \hat{y})^2 & \text{if } |y - \hat{y}| \le \delta \\[2pt]
+\delta |y - \hat{y}| - \tfrac{1}{2}\delta^2 & \text{otherwise}
+\end{cases}
+$$
 
 작은 오차엔 부드러움(MSE), 큰 오차엔 robust(MAE). 실무 default로 자주. $\delta$는 hyperparameter — *default 1.0*. 표준값·튜닝은 [hyperparameters/loss.md#huber-δ](topics/hyperparameters/loss.md#huber-δ), 시각적 직관(loss curve, 잔차 도형)은 [topics/regression_loss/01_geometry.md](topics/regression_loss/01_geometry.md#1.4-huber).
 
@@ -210,7 +216,13 @@ $\gamma > 0$이면 $\hat{y}$가 1에 가까운 (이미 잘 맞힌) sample은 $(1
 
 **Label Smoothing**: 정답을 one-hot 대신 약간 smooth하게. 정답 클래스에 0.9, 나머지에 0.1/(K-1)씩.
 
-$$y_c = \begin{cases} 1 - \alpha & c = c^* \\ \alpha/(K-1) & \text{otherwise} \end{cases}$$
+$$
+y_c =
+\begin{cases}
+1 - \alpha & \text{if } c = c^* \\[2pt]
+\alpha/(K-1) & \text{otherwise}
+\end{cases}
+$$
 
 왜? Hard one-hot을 학습하면 모델이 **과신(overconfident)**한다 — 정답에 99.99% 확률, 나머지에 0.001%. 이는 calibration이 안 좋고 일반화도 약간 손해. Label smoothing은 모델이 "100%는 절대 없다"를 학습하게 해 더 robust해진다. 큰 모델 + 큰 데이터에서 자주 쓴다.
 

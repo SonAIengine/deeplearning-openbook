@@ -196,7 +196,13 @@ $$y = \sqrt{x}$$
 
 ### Box-Cox
 
-$$y = \begin{cases} \frac{x^\lambda - 1}{\lambda} & \lambda \neq 0 \\ \log x & \lambda = 0 \end{cases}$$
+$$
+y =
+\begin{cases}
+\dfrac{x^\lambda - 1}{\lambda} & \text{if } \lambda \neq 0 \\[4pt]
+\log x & \text{if } \lambda = 0
+\end{cases}
+$$
 
 - 양수만 가능
 - $\lambda$ 자동 결정 (MLE)

@@ -78,7 +78,13 @@ $$L_{\text{MAE}} = \frac{1}{N} \sum_i |y_i - \hat{y}_i| = \frac{1}{N} \sum_i |r_
 
 Huber의 정의는:
 
-$$L_\delta(r) = \begin{cases} \frac{1}{2}r^2 & |r| \le \delta \\ \delta |r| - \frac{1}{2}\delta^2 & \text{otherwise} \end{cases}$$
+$$
+L_\delta(r) =
+\begin{cases}
+\tfrac{1}{2} r^2 & \text{if } |r| \le \delta \\[2pt]
+\delta |r| - \tfrac{1}{2}\delta^2 & \text{otherwise}
+\end{cases}
+$$
 
 기하학적 해석:
 

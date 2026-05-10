@@ -10,7 +10,13 @@
 
 Huber loss는 작은 오차엔 MSE, 큰 오차엔 MAE인 절충:
 
-$$L_\delta(y, \hat{y}) = \begin{cases} \frac{1}{2}(y - \hat{y})^2 & |y - \hat{y}| \le \delta \\ \delta |y - \hat{y}| - \frac{1}{2}\delta^2 & \text{otherwise} \end{cases}$$
+$$
+L_\delta(y, \hat{y}) =
+\begin{cases}
+\tfrac{1}{2}(y - \hat{y})^2 & \text{if } |y - \hat{y}| \le \delta \\[2pt]
+\delta |y - \hat{y}| - \tfrac{1}{2}\delta^2 & \text{otherwise}
+\end{cases}
+$$
 
 $\delta$가 squared/linear 전환 임계값.
 
