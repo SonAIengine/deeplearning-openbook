@@ -27,6 +27,17 @@
 
 ## 1.2 MSE = 정사각형의 면적 합
 
+> **어떻게 나왔나 — 천문학에서 시작**
+>
+> MSE(최소제곱법)는 **Carl Friedrich Gauss**가 1795년 17세에 발견했다고 알려져 있고, **Adrien-Marie Legendre**가 1805년에 먼저 출판했다(우선권 분쟁이 있었지만 둘 다 독립 발견). 동기는 *행성 궤도 계산* — Gauss는 1801년 사라진 소행성 *Ceres*의 위치를 측정 오차가 섞인 데이터에서 정확히 예측해 학계에 충격을 줬다.
+>
+> 핵심 아이디어: 측정 오차가 정규분포(가우시안)를 따른다고 가정하면, *제곱 잔차의 합을 최소화하는 파라미터*가 곧 가장 그럴듯한 답이라는 사실(MLE)이 수학적으로 증명된다. 왜 절댓값이 아닌 제곱?
+> - *부호 상쇄 문제*: 그냥 합치면 양/음 잔차가 서로 상쇄. 제곱은 항상 양수.
+> - *수학적 다루기 쉬움*: 미분 가능, 닫힌 형태 해 $w = (X^T X)^{-1} X^T y$ 존재. 19세기 *손 계산* 시대에 결정적 장점.
+> - *통계적 정당성*: 가우시안 가정 아래 MLE.
+>
+> 이 세 장점이 200년 넘게 MSE를 회귀의 default로 만든 배경.
+
 MSE의 정의는:
 
 $$L_{\text{MSE}} = \frac{1}{N} \sum_i (y_i - \hat{y}_i)^2 = \frac{1}{N} \sum_i r_i^2$$
@@ -76,6 +87,17 @@ $$L_{\text{MSE}} = \frac{1}{N} \sum_i (y_i - \hat{y}_i)^2 = \frac{1}{N} \sum_i r
 
 ## 1.3 MAE = 직선 길이의 합
 
+> **어떻게 나왔나 — MSE보다 50년 먼저**
+>
+> 의외로 MAE(최소 절댓값 편차, LAD)가 **MSE보다 먼저** 제안됐다. **Roger Joseph Boscovich**가 1755년경 천문학·측지학에서 사용했고, **Laplace**도 1789년 사용. 즉 Gauss/Legendre의 MSE(1795–1805)보다 *반세기 앞선*다.
+>
+> 그런데 19세기 이후 MAE가 MSE에 밀려난 이유:
+> - *닫힌 형태 해 없음*: MSE는 행렬 한 번 곱해서 푸는데, MAE는 *linear programming* 같은 반복 알고리즘이 필요. 컴퓨터 없는 시대에는 사실상 푸는 방법이 없었음.
+> - *0에서 미분 불가능*: 해석학·확률론과의 결합이 매끄럽지 않음.
+> - *Gauss/Legendre의 영향력*: 두 거장이 MSE를 추천 → 학계가 그 흐름을 따라감.
+>
+> **MAE의 부활은 컴퓨터 시대**. 반복 알고리즘 비용이 무시할 만해지자 *outlier robust*라는 본질적 장점이 다시 주목받음. 현대 robust regression의 출발점.
+
 MAE의 정의는:
 
 $$L_{\text{MAE}} = \frac{1}{N} \sum_i |y_i - \hat{y}_i| = \frac{1}{N} \sum_i |r_i|$$
@@ -109,6 +131,20 @@ $$L_{\text{MAE}} = \frac{1}{N} \sum_i |y_i - \hat{y}_i| = \frac{1}{N} \sum_i |r_
 ---
 
 ## 1.4 Huber = 두 도형의 절충
+
+> **어떻게 나왔나 — robust statistics의 시작**
+>
+> **Peter J. Huber**가 1964년 논문 *"Robust Estimation of a Location Parameter"* (Annals of Mathematical Statistics)에서 제안. 이 논문이 사실상 *robust statistics*라는 분야의 출발점.
+>
+> 동기는 매우 구체적이다 — *"실제 데이터 분포는 정확히 가우시안이 아니라, 대부분 가우시안 + 가끔 outlier가 섞인 contamination 분포"*. 예를 들어 99%는 $\mathcal{N}(0, 1)$이고 1%는 $\mathcal{N}(0, 100)$ 같은 *오염된 정규*.
+>
+> 이런 상황에서:
+> - MSE는 가우시안 가정이라 outlier(1%)에 끌려가 *wrong*
+> - MAE는 outlier에 robust하지만 정상(99%)에서 *비효율적* (정규에 비해 분산이 큼)
+>
+> Huber의 통찰: **두 영역을 분리하자**. 잔차 $|r| \le \delta$이면 정상으로 보고 *MSE*(=가우시안 MLE), $|r| > \delta$이면 outlier로 보고 *MAE*(=robust). 이것이 contamination model 아래의 *minimax optimal* estimator라는 게 수학적으로 증명됨.
+>
+> 즉 Huber는 *임의의 절충*이 아니라 **"현실 분포는 정규+오염"이라는 가정 아래의 이론적 최적해**다. 실무에서 잘 동작하는 이유가 여기 있음.
 
 Huber의 정의는:
 
