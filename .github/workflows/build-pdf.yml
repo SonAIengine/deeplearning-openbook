@@ -33,8 +33,11 @@ jobs:
             pandoc \
             texlive-xetex \
             texlive-fonts-recommended \
+            texlive-fonts-extra \
             texlive-lang-cjk \
             texlive-latex-extra \
+            texlive-plain-generic \
+            lmodern \
             fonts-nanum \
             fonts-nanum-coding \
             imagemagick \
