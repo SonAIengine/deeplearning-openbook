@@ -3,6 +3,8 @@
 서술·설명 위주 딥러닝 시험을 위한 오픈북 정리.
 "정의 암기 X / 구조 이해 O / 왜·비교·설계·적용" 사고 패턴 중심.
 
+> ⭐ **이 자료가 도움이 되셨다면 저장소 우측 상단의 `Star`를 눌러주세요.** 더 많은 분이 자료를 찾을 수 있게 됩니다.
+
 ## 📥 PDF 다운로드
 
 [![Download Full](https://img.shields.io/badge/Download-Full%20PDF-blue?style=for-the-badge&logo=adobeacrobatreader)](https://github.com/SonAIengine/deeplearning-openbook/releases/latest/download/deeplearning-openbook.pdf)
