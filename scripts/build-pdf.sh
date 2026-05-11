@@ -56,7 +56,12 @@ if [ "$VARIANT" = "summary" ]; then
   chapters=(
     "12_BigPicture_FAQ.md"
   )
-  topics=()
+  topics=(
+    "topics/concept_map/README.md"
+    "topics/concept_map/01_lineages.md"
+    "topics/concept_map/02_transversal.md"
+    "topics/concept_map/03_workflow.md"
+  )
 else
   chapters=(
     "README.md"
@@ -88,6 +93,10 @@ else
     "topics/hyperparameters/lr_schedule.md"
     "topics/regression_loss/README.md"
     "topics/regression_loss/01_geometry.md"
+    "topics/concept_map/README.md"
+    "topics/concept_map/01_lineages.md"
+    "topics/concept_map/02_transversal.md"
+    "topics/concept_map/03_workflow.md"
   )
 fi
 

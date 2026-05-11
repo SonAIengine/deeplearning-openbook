@@ -14,7 +14,7 @@
 | 버전 | 내용 | 분량 | 용도 |
 |---|---|---|---|
 | 📘 [전체본](https://github.com/SonAIengine/deeplearning-openbook/releases/latest/download/deeplearning-openbook.pdf) | README + 본문 13장 + 심화 자료(`topics/`) | ~268p | 처음부터 정독·레퍼런스 |
-| 📕 [요약본](https://github.com/SonAIengine/deeplearning-openbook/releases/latest/download/deeplearning-openbook-summary.pdf) | §12 BigPicture FAQ (발전사 + Q&A 30선 + A4 1장 압축) | ~15-25p | 시험·면접 직전 통독 |
+| 📕 [요약본](https://github.com/SonAIengine/deeplearning-openbook/releases/latest/download/deeplearning-openbook-summary.pdf) | §12 BigPicture FAQ (발전사 + Q&A 30선 + A4 1장 압축) + 개념 연결도 (계보·관통·워크플로우) | ~30-50p | 시험·면접 직전 통독 |
 
 - 릴리스 페이지(과거 빌드 포함): <https://github.com/SonAIengine/deeplearning-openbook/releases>
 - 로컬 빌드: `./scripts/build-pdf.sh` (요약본은 `VARIANT=summary ./scripts/build-pdf.sh`)
@@ -57,6 +57,7 @@
 | [EDA — 분포에서 결정까지 (hub)](topics/EDA/README.md) | §10.2 | 한 페이지 hub — 전체 EDA 그림 + 핵심 키워드별 sub-page 링크 (철학·분포·결측·이상치·상관·시각화·데이터 type·결정 매트릭스·함정·도구·workflow) |
 | [Hyperparameters — 표준값과 결정 가이드](topics/hyperparameters/README.md) | §2·§3·§5 | Loss(δ/γ/α/margin/τ), Optimizer(β/Adam), Regularization(λ/p), LR schedule 5종 — 표준값·왜 그 값·언제 키우고 줄이나·함정 |
 | [회귀 loss의 기하학적 직관](topics/regression_loss/README.md) | §2.2 | 잔차를 도형으로 보기 — MSE는 정사각형 면적, MAE는 직선 길이, Huber는 절충. outlier 민감성의 시각적 이유 |
+| [개념 연결도 (hub)](topics/concept_map/README.md) | §12 + 전 영역 | 용어를 *나열*이 아니라 **계보·관통·워크플로우** 세 관점으로 묶기. Loss·Activation·Optimizer·Norm·CNN·Sequence 6대 계보, Vanishing·Bias-Variance·Inductive bias·Regularization 4대 관통 |
 
 ## 각 문서 공통 구조
 
