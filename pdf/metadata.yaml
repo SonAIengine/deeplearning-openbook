@@ -8,6 +8,7 @@ classoption:
   - oneside
   - openany
 geometry:
+  - a4paper
   - margin=1.25cm
   - includehead
   - includefoot
