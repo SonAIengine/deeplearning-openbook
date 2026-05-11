@@ -35,6 +35,8 @@ jobs:
             texlive-fonts-recommended \
             texlive-fonts-extra \
             texlive-lang-cjk \
+            texlive-lang-chinese \
+            texlive-lang-korean \
             texlive-latex-extra \
             texlive-plain-generic \
             lmodern \
