@@ -1,0 +1,50 @@
+---
+title: "Deep Learning Open-Book — 요약본"
+subtitle: "BigPicture & FAQ — 발전사 흐름 + Q&A 30선 + A4 1장 압축 요약"
+author: "손성준 (SonAIengine)"
+lang: ko
+documentclass: extreport
+classoption:
+  - oneside
+  - openany
+geometry:
+  - a4paper
+  - margin=1.25cm
+  - includehead
+  - includefoot
+fontsize: 9pt
+linestretch: 1.1
+mainfont: "DejaVu Serif"
+sansfont: "DejaVu Sans"
+monofont: "DejaVu Sans Mono"
+CJKmainfont: "NanumGothic"
+CJKsansfont: "NanumGothic"
+CJKmonofont: "NanumGothicCoding"
+colorlinks: true
+linkcolor: "MidnightBlue"
+urlcolor: "MidnightBlue"
+toccolor: "MidnightBlue"
+toc: true
+toc-depth: 2
+numbersections: true
+secnumdepth: 3
+header-includes:
+  - \usepackage{fontspec}
+  - \usepackage{xeCJK}
+  - \usepackage{longtable}
+  - \usepackage{booktabs}
+  - \usepackage{array}
+  - \usepackage{makecell}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{amsmath}
+  - \usepackage{amssymb}
+  - \usepackage{mathtools}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhf{}
+  - \fancyhead[L]{\leftmark}
+  - \fancyfoot[C]{\thepage}
+  - \renewcommand{\headrulewidth}{0.4pt}
+  - \setlength{\emergencystretch}{3em}
+  - \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+---

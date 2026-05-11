@@ -51,14 +51,19 @@ jobs:
         run: |
           sudo sed -i 's|<policy domain="coder" rights="none" pattern="PDF" />|<policy domain="coder" rights="read\|write" pattern="PDF" />|' /etc/ImageMagick-6/policy.xml || true
 
-      - name: Build PDF
-        run: ./scripts/build-pdf.sh
+      - name: Build full PDF
+        run: VARIANT=full ./scripts/build-pdf.sh
 
-      - name: Upload artifact (always)
+      - name: Build summary PDF
+        run: VARIANT=summary ./scripts/build-pdf.sh
+
+      - name: Upload artifacts (always)
         uses: actions/upload-artifact@v4
         with:
           name: deeplearning-openbook-pdf
-          path: deeplearning-openbook.pdf
+          path: |
+            deeplearning-openbook.pdf
+            deeplearning-openbook-summary.pdf
           if-no-files-found: error
 
       - name: Publish/refresh rolling release
@@ -74,7 +79,10 @@ jobs:
             - 빌드 시각: ${{ github.event.head_commit.timestamp }}
 
             ## 다운로드
-            - [deeplearning-openbook.pdf](https://github.com/${{ github.repository }}/releases/latest/download/deeplearning-openbook.pdf)
-          files: deeplearning-openbook.pdf
+            - 📘 전체본: [deeplearning-openbook.pdf](https://github.com/${{ github.repository }}/releases/latest/download/deeplearning-openbook.pdf)
+            - 📕 요약본 (§12 BigPicture FAQ): [deeplearning-openbook-summary.pdf](https://github.com/${{ github.repository }}/releases/latest/download/deeplearning-openbook-summary.pdf)
+          files: |
+            deeplearning-openbook.pdf
+            deeplearning-openbook-summary.pdf
           make_latest: "true"
           prerelease: false

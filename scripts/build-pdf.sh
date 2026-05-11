@@ -20,7 +20,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-OUTPUT="${OUTPUT:-deeplearning-openbook.pdf}"
+VARIANT="${VARIANT:-full}"   # full | summary
+case "$VARIANT" in
+  full)    OUTPUT="${OUTPUT:-deeplearning-openbook.pdf}"          ; METADATA="pdf/metadata.yaml" ;;
+  summary) OUTPUT="${OUTPUT:-deeplearning-openbook-summary.pdf}"  ; METADATA="pdf/metadata-summary.yaml" ;;
+  *) echo "Unknown VARIANT: $VARIANT (use full or summary)" >&2; exit 2 ;;
+esac
+
 TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR"' EXIT
 
@@ -44,40 +50,46 @@ done
 shopt -u nullglob
 
 # ---------------------------------------------------------------------------
-# 2. File order: README → 본문 13 chapters → topics/ as appendix.
+# 2. File order: depends on VARIANT.
 # ---------------------------------------------------------------------------
-chapters=(
-  "README.md"
-  "01_ML_Overview.md"
-  "02_FNNs.md"
-  "03_DNNs.md"
-  "04_CNNs.md"
-  "05_RNNs.md"
-  "06_LSTM_GRU.md"
-  "07_Cross_Architecture_Design.md"
-  "08_WhatIf_Ablation.md"
-  "09_Architecture_Hyperparameter_Decisions.md"
-  "10_Training_Diagnosis.md"
-  "11_Comparison_Decision.md"
-  "12_BigPicture_FAQ.md"
-  "13_Task_Design_Playbook.md"
-)
-
-topics=(
-  "topics/EDA/README.md"
-  "topics/EDA/00_quick_reference.md"
-  "topics/EDA/01_philosophy.md"
-  "topics/EDA/02_anscombe_datasaurus.md"
-  "topics/EDA/03_distributions.md"
-  "topics/EDA/04_missing_data.md"
-  "topics/hyperparameters/README.md"
-  "topics/hyperparameters/loss.md"
-  "topics/hyperparameters/optimizer.md"
-  "topics/hyperparameters/regularization.md"
-  "topics/hyperparameters/lr_schedule.md"
-  "topics/regression_loss/README.md"
-  "topics/regression_loss/01_geometry.md"
-)
+if [ "$VARIANT" = "summary" ]; then
+  chapters=(
+    "12_BigPicture_FAQ.md"
+  )
+  topics=()
+else
+  chapters=(
+    "README.md"
+    "01_ML_Overview.md"
+    "02_FNNs.md"
+    "03_DNNs.md"
+    "04_CNNs.md"
+    "05_RNNs.md"
+    "06_LSTM_GRU.md"
+    "07_Cross_Architecture_Design.md"
+    "08_WhatIf_Ablation.md"
+    "09_Architecture_Hyperparameter_Decisions.md"
+    "10_Training_Diagnosis.md"
+    "11_Comparison_Decision.md"
+    "12_BigPicture_FAQ.md"
+    "13_Task_Design_Playbook.md"
+  )
+  topics=(
+    "topics/EDA/README.md"
+    "topics/EDA/00_quick_reference.md"
+    "topics/EDA/01_philosophy.md"
+    "topics/EDA/02_anscombe_datasaurus.md"
+    "topics/EDA/03_distributions.md"
+    "topics/EDA/04_missing_data.md"
+    "topics/hyperparameters/README.md"
+    "topics/hyperparameters/loss.md"
+    "topics/hyperparameters/optimizer.md"
+    "topics/hyperparameters/regularization.md"
+    "topics/hyperparameters/lr_schedule.md"
+    "topics/regression_loss/README.md"
+    "topics/regression_loss/01_geometry.md"
+  )
+fi
 
 # ---------------------------------------------------------------------------
 # 3. Pre-process each markdown file:
@@ -145,7 +157,9 @@ emit_part() {
   printf '\n\n\\part{%s}\n\n' "$title" >> "$combined"
 }
 
-emit_part "본문"
+if [ "$VARIANT" = "full" ]; then
+  emit_part "본문"
+fi
 for f in "${chapters[@]}"; do
   echo "  + $f"
   out="$TMPDIR/$(echo "$f" | tr '/' '_')"
@@ -154,14 +168,16 @@ for f in "${chapters[@]}"; do
   emit_divider
 done
 
-emit_part "부록 — 심화 자료 (topics/)"
-for f in "${topics[@]}"; do
-  echo "  + $f"
-  out="$TMPDIR/$(echo "$f" | tr '/' '_')"
-  preprocess "$f" "$out"
-  cat "$out" >> "$combined"
-  emit_divider
-done
+if [ ${#topics[@]} -gt 0 ]; then
+  emit_part "부록 — 심화 자료 (topics/)"
+  for f in "${topics[@]}"; do
+    echo "  + $f"
+    out="$TMPDIR/$(echo "$f" | tr '/' '_')"
+    preprocess "$f" "$out"
+    cat "$out" >> "$combined"
+    emit_divider
+  done
+fi
 
 # ---------------------------------------------------------------------------
 # 5. Run pandoc → PDF (xelatex for Korean + math).
@@ -170,7 +186,7 @@ echo "→ pandoc → $OUTPUT"
 pandoc "$combined" \
   --from=markdown+task_lists-smart-subscript-superscript \
   --pdf-engine=xelatex \
-  --metadata-file=pdf/metadata.yaml \
+  --metadata-file="$METADATA" \
   --top-level-division=chapter \
   --highlight-style=tango \
   --resource-path=".:assets:assets/images:assets/gif-stills" \
