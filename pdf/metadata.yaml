@@ -3,16 +3,16 @@ title: "Deep Learning Open-Book Notes"
 subtitle: "정의 암기 X / 구조 이해 O — 왜·비교·설계·적용"
 author: "손성준 (SonAIengine)"
 lang: ko
-documentclass: report
+documentclass: extreport
 classoption:
   - oneside
   - openany
 geometry:
-  - margin=2cm
+  - margin=1.25cm
   - includehead
   - includefoot
-fontsize: 11pt
-linestretch: 1.25
+fontsize: 9pt
+linestretch: 1.1
 mainfont: "DejaVu Serif"
 sansfont: "DejaVu Sans"
 monofont: "DejaVu Sans Mono"
