@@ -3,6 +3,19 @@
 서술·설명 위주 딥러닝 시험을 위한 오픈북 정리.
 "정의 암기 X / 구조 이해 O / 왜·비교·설계·적용" 사고 패턴 중심.
 
+## 📥 한 권 PDF 다운로드
+
+본문 13장 + 심화 자료(`topics/`) 전체를 한 PDF로 묶어 자동 빌드합니다.
+
+[![Download PDF](https://img.shields.io/badge/Download-PDF-blue?style=for-the-badge&logo=adobeacrobatreader)](https://github.com/SonAIengine/deeplearning-openbook/releases/latest/download/deeplearning-openbook.pdf)
+[![Build PDF](https://github.com/SonAIengine/deeplearning-openbook/actions/workflows/build-pdf.yml/badge.svg)](https://github.com/SonAIengine/deeplearning-openbook/actions/workflows/build-pdf.yml)
+
+- 최신 PDF: <https://github.com/SonAIengine/deeplearning-openbook/releases/latest/download/deeplearning-openbook.pdf>
+- 릴리스 페이지(과거 빌드 포함): <https://github.com/SonAIengine/deeplearning-openbook/releases>
+- 로컬 빌드: `./scripts/build-pdf.sh` (필요 의존성은 스크립트 상단 주석 참고)
+
+> `main`에 푸시될 때마다 GitHub Actions가 PDF를 다시 빌드하고 `pdf-latest` 릴리스를 갱신합니다.
+
 ## 구성
 
 ### 기초 (각 모델의 구조와 핵심 질문)

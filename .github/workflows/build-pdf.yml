@@ -1,0 +1,75 @@
+name: Build PDF
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*.md"
+      - "topics/**/*.md"
+      - "assets/**"
+      - "pdf/**"
+      - "scripts/build-pdf.sh"
+      - ".github/workflows/build-pdf.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-pdf
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pandoc, TeX Live, Korean fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pandoc \
+            texlive-xetex \
+            texlive-fonts-recommended \
+            texlive-lang-cjk \
+            texlive-latex-extra \
+            fonts-nanum \
+            fonts-nanum-coding \
+            imagemagick \
+            librsvg2-bin \
+            python3
+          fc-cache -fv
+
+      - name: Allow ImageMagick to read PDFs/SVGs (relax default policy)
+        run: |
+          sudo sed -i 's|<policy domain="coder" rights="none" pattern="PDF" />|<policy domain="coder" rights="read\|write" pattern="PDF" />|' /etc/ImageMagick-6/policy.xml || true
+
+      - name: Build PDF
+        run: ./scripts/build-pdf.sh
+
+      - name: Upload artifact (always)
+        uses: actions/upload-artifact@v4
+        with:
+          name: deeplearning-openbook-pdf
+          path: deeplearning-openbook.pdf
+          if-no-files-found: error
+
+      - name: Publish/refresh rolling release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pdf-latest
+          name: "Latest PDF (auto-built)"
+          body: |
+            자동 생성된 최신 PDF입니다. 푸시할 때마다 갱신됩니다.
+
+            - Commit: ${{ github.sha }}
+            - 빌드 시각: ${{ github.event.head_commit.timestamp }}
+
+            ## 다운로드
+            - [deeplearning-openbook.pdf](https://github.com/${{ github.repository }}/releases/latest/download/deeplearning-openbook.pdf)
+          files: deeplearning-openbook.pdf
+          make_latest: "true"
+          prerelease: false

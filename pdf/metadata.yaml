@@ -1,0 +1,50 @@
+---
+title: "Deep Learning Open-Book Notes"
+subtitle: "정의 암기 X / 구조 이해 O — 왜·비교·설계·적용"
+author: "손성준 (SonAIengine)"
+lang: ko
+documentclass: report
+classoption:
+  - oneside
+  - openany
+geometry:
+  - margin=2cm
+  - includehead
+  - includefoot
+fontsize: 11pt
+linestretch: 1.25
+mainfont: "DejaVu Serif"
+sansfont: "DejaVu Sans"
+monofont: "DejaVu Sans Mono"
+CJKmainfont: "NanumGothic"
+CJKsansfont: "NanumGothic"
+CJKmonofont: "NanumGothicCoding"
+colorlinks: true
+linkcolor: "MidnightBlue"
+urlcolor: "MidnightBlue"
+toccolor: "MidnightBlue"
+toc: true
+toc-depth: 2
+numbersections: true
+secnumdepth: 3
+header-includes:
+  - \usepackage{fontspec}
+  - \usepackage{xeCJK}
+  - \usepackage{emoji}
+  - \usepackage{longtable}
+  - \usepackage{booktabs}
+  - \usepackage{array}
+  - \usepackage{makecell}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{amsmath}
+  - \usepackage{amssymb}
+  - \usepackage{mathtools}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhf{}
+  - \fancyhead[L]{\leftmark}
+  - \fancyfoot[C]{\thepage}
+  - \renewcommand{\headrulewidth}{0.4pt}
+  - \setlength{\emergencystretch}{3em}
+  - \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+---
