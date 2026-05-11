@@ -168,7 +168,7 @@ done
 # ---------------------------------------------------------------------------
 echo "→ pandoc → $OUTPUT"
 pandoc "$combined" \
-  --from=gfm+tex_math_dollars+raw_tex+yaml_metadata_block \
+  --from=commonmark_x+tex_math_dollars+raw_tex+yaml_metadata_block \
   --pdf-engine=xelatex \
   --metadata-file=pdf/metadata.yaml \
   --top-level-division=chapter \
