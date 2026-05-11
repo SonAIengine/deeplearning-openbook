@@ -30,7 +30,6 @@ secnumdepth: 3
 header-includes:
   - \usepackage{fontspec}
   - \usepackage{xeCJK}
-  - \usepackage{emoji}
   - \usepackage{longtable}
   - \usepackage{booktabs}
   - \usepackage{array}
